@@ -20,7 +20,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/games')
   });
 
 
-  app.get("/home" ,(req,res) => {
+  app.get("/home/login" ,(req,res) => {
     res.render("index.ejs");
   });
   
@@ -36,15 +36,13 @@ mongoose.connect('mongodb://127.0.0.1:27017/games')
   
         console.log("Retrieved username:", temp);
   
-        globalName = details[0].username;
-        console.log(globalName);
         if (temp === username && temp2 === password) {
           console.log("Username and password match. Working.");
           res.render("home.ejs");
         } else {
           console.log("Username or password does not match. Not working.");
 
-          res.redirect("/home/new");
+          res.redirect("/home/login");
         }
       } else {
         console.log("No user found. Not working.");
@@ -54,6 +52,30 @@ mongoose.connect('mongodb://127.0.0.1:27017/games')
       console.log("Error:", err);
       res.redirect("/home/login");
     }
+  });
+
+
+  app.get("/home/register", (req, res) => {
+    res.render("register.ejs");
+  });
+  
+  app.post("/home/reg", (req, res) => {
+    let { username, email, password } = req.body;
+    let newUser = new User({
+      username: username,
+      email: email,
+      password: password,
+    //   mobile : mobile
+    });
+  
+    newUser.save()
+      .then((res) => {
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);
+      });
+  
+    res.redirect("/home/login");
   });
   
   app.listen(8080, (req, res) => {
